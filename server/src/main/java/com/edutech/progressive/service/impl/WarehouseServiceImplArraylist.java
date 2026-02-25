@@ -8,7 +8,7 @@ import com.edutech.progressive.entity.Warehouse;
 import com.edutech.progressive.service.WarehouseService;
  
 public class WarehouseServiceImplArraylist implements WarehouseService  {
-    List<Warehouse> w = new ArrayList<>();
+    public static List<Warehouse> w = new ArrayList<>();
     @Override
     public List<Warehouse> getAllWarehouses() {
         return w;
@@ -24,6 +24,10 @@ public class WarehouseServiceImplArraylist implements WarehouseService  {
     public List<Warehouse> getWarehousesSortedByCapacity() {
         Collections.sort(w);
         return w;
+    }
+ 
+    public void emptyArrayList(){
+        w.clear();
     }
  
 }
