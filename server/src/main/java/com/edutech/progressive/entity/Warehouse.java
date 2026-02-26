@@ -1,9 +1,10 @@
 package com.edutech.progressive.entity;
- 
+
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
- 
+@Entity
 public class Warehouse implements Comparable<Warehouse>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +56,5 @@ public class Warehouse implements Comparable<Warehouse>{
     public int compareTo(Warehouse o) {
        return Integer.compare(this.capacity, o.capacity);
     }
+    
 }
