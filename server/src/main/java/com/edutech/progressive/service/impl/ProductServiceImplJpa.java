@@ -1,44 +1,48 @@
 package com.edutech.progressive.service.impl;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.edutech.progressive.entity.Product;
 import com.edutech.progressive.repository.ProductRepository;
 import com.edutech.progressive.service.ProductService;
-@Service
+import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service("productServiceImplJpa")
 public class ProductServiceImplJpa implements ProductService {
 
-    @Autowired
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public ProductServiceImplJpa(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @Override
     public List<Product> getAllProducts() throws SQLException {
-        return productRepository.findAll();
+        return new ArrayList<>(productRepository.findAll());
     }
 
     @Override
     public Product getProductById(int productId) throws SQLException {
-        return productRepository.findById(productId).orElseThrow();
+        return productRepository.findByProductId(productId);
     }
 
     @Override
     public int addProduct(Product product) throws SQLException {
-        productRepository.save(product);
-        return product.getProductId();
+        // Association must be set per Day-7 (Warehouse)
+        if (product.getWarehouse() == null) {
+            throw new SQLException("Warehouse association must be set on Product");
+        }
+        return productRepository.save(product).getProductId();
     }
 
     @Override
     public void updateProduct(Product product) throws SQLException {
-        Product oldProduct = productRepository.findById(product.getProductId()).orElseThrow();
-        oldProduct.setWarehouseId(product.getWarehouseId());
-        oldProduct.setProductName(product.getProductName());
-        oldProduct.setProductDescription(product.getProductDescription());
-        oldProduct.setQuantity(product.getQuantity());
-        oldProduct.setPrice(product.getPrice());
-        productRepository.save(oldProduct);
+        if (product.getWarehouse() == null) {
+            throw new SQLException("Warehouse association must be set on Product");
+        }
+        productRepository.save(product);
     }
 
     @Override
@@ -46,8 +50,8 @@ public class ProductServiceImplJpa implements ProductService {
         productRepository.deleteById(productId);
     }
 
+    @Override
     public List<Product> getAllProductByWarehouse(int warehouseId) throws SQLException {
-        return List.of();
+        return new ArrayList<>(productRepository.findAllByWarehouse_WarehouseId(warehouseId));
     }
-
 }

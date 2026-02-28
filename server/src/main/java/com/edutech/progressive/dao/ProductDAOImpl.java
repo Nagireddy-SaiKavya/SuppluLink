@@ -1,37 +1,31 @@
 package com.edutech.progressive.dao;
  
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.edutech.progressive.entity.Product;
+import com.edutech.progressive.entity.Warehouse;
+import com.edutech.progressive.service.impl.WarehouseServiceImplJpa; // only to construct Warehouse if needed
+import com.edutech.progressive.config.DatabaseConnectionManager;
+ 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
  
-import com.edutech.progressive.config.DatabaseConnectionManager;
-import com.edutech.progressive.entity.Product;
- 
 public class ProductDAOImpl implements ProductDAO {
-    Connection connection;
- 
-    public ProductDAOImpl() {
-        try {
-            connection = DatabaseConnectionManager.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
  
     @Override
     public int addProduct(Product product) throws SQLException {
-        String query = "INSERT INTO product(warehouse_id, product_name, product_description, quantity, price) VALUES(?,?,?,?,?)";
-        try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, product.getWarehouseId());
+        String sql = "INSERT INTO product (warehouse_id, product_name, product_description, quantity, price) " +
+                     "VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+ 
+            ps.setInt(1, product.getWarehouse().getWarehouseId());
             ps.setString(2, product.getProductName());
             ps.setString(3, product.getProductDescription());
             ps.setInt(4, product.getQuantity());
-            ps.setDouble(5, product.getPrice());
+            ps.setLong(5, product.getPrice());
+ 
             ps.executeUpdate();
+ 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int id = rs.getInt(1);
@@ -45,12 +39,28 @@ public class ProductDAOImpl implements ProductDAO {
  
     @Override
     public Product getProductById(int productId) throws SQLException {
-        String sql = "SELECT * FROM product WHERE product_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "SELECT product_id, warehouse_id, product_name, product_description, quantity, price " +
+                     "FROM product WHERE product_id = ?";
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+ 
             ps.setInt(1, productId);
+ 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapRowToProduct(rs);
+                    Product p = new Product();
+                    p.setProductId(rs.getInt("product_id"));
+ 
+                    Warehouse w = new Warehouse();
+                    w.setWarehouseId(rs.getInt("warehouse_id"));
+                    p.setWarehouse(w);
+ 
+                    p.setProductName(rs.getString("product_name"));
+                    p.setProductDescription(rs.getString("product_description"));
+                    p.setQuantity(rs.getInt("quantity"));
+                    p.setPrice(rs.getLong("price"));
+ 
+                    return p;
                 }
             }
         }
@@ -59,14 +69,18 @@ public class ProductDAOImpl implements ProductDAO {
  
     @Override
     public void updateProduct(Product product) throws SQLException {
-        String sql = "UPDATE product SET warehouse_id = ?, product_name = ?, product_description = ?, quantity = ?, price = ? WHERE product_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, product.getWarehouseId());
+        String sql = "UPDATE product SET warehouse_id = ?, product_name = ?, product_description = ?, " +
+                     "quantity = ?, price = ? WHERE product_id = ?";
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+ 
+            ps.setInt(1, product.getWarehouse().getWarehouseId());
             ps.setString(2, product.getProductName());
             ps.setString(3, product.getProductDescription());
             ps.setInt(4, product.getQuantity());
-            ps.setDouble(5, product.getPrice());
+            ps.setLong(5, product.getPrice());
             ps.setInt(6, product.getProductId());
+ 
             ps.executeUpdate();
         }
     }
@@ -74,7 +88,9 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public void deleteProduct(int productId) throws SQLException {
         String sql = "DELETE FROM product WHERE product_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+ 
             ps.setInt(1, productId);
             ps.executeUpdate();
         }
@@ -83,25 +99,27 @@ public class ProductDAOImpl implements ProductDAO {
     @Override
     public List<Product> getAllProducts() throws SQLException {
         String sql = "SELECT product_id, warehouse_id, product_name, product_description, quantity, price FROM product";
-        List<Product> products = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(sql);
+        List<Product> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+ 
             while (rs.next()) {
-                products.add(mapRowToProduct(rs));
+                Product p = new Product();
+                p.setProductId(rs.getInt("product_id"));
+ 
+                Warehouse w = new Warehouse();
+                w.setWarehouseId(rs.getInt("warehouse_id"));
+                p.setWarehouse(w);
+ 
+                p.setProductName(rs.getString("product_name"));
+                p.setProductDescription(rs.getString("product_description"));
+                p.setQuantity(rs.getInt("quantity"));
+                p.setPrice(rs.getLong("price"));
+ 
+                list.add(p);
             }
         }
-        return products;
-    }
- 
-    // --- helper mapper ---
-    private Product mapRowToProduct(ResultSet rs) throws SQLException {
-        Product p = new Product();
-        p.setProductId(rs.getInt("product_id"));
-        p.setWarehouseId(rs.getInt("warehouse_id"));
-        p.setProductName(rs.getString("product_name"));
-        p.setProductDescription(rs.getString("product_description"));
-        p.setQuantity(rs.getInt("quantity"));
-        p.setPrice(rs.getLong("price"));
-        return p;
+        return list;
     }
 }

@@ -1,148 +1,81 @@
 package com.edutech.progressive.service.impl;
- 
-import java.sql.SQLException;
 
-import java.util.ArrayList;
-
-import java.util.Comparator;
-
-import java.util.List;
- 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.dao.DataAccessException;
-
-import org.springframework.stereotype.Service;
- 
 import com.edutech.progressive.entity.Supplier;
-
+import com.edutech.progressive.repository.ProductRepository;
 import com.edutech.progressive.repository.SupplierRepository;
-
+import com.edutech.progressive.repository.WarehouseRepository;
 import com.edutech.progressive.service.SupplierService;
- 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Service("supplierServiceImplJpa")
-
 public class SupplierServiceImplJpa implements SupplierService {
- 
+
+    private final SupplierRepository supplierRepository;
+    private final WarehouseRepository warehouseRepository; // may be null in 1-arg ctor (unit tests)
+    private final ProductRepository productRepository;     // may be null in 1-arg ctor (unit tests)
+
+    // Preferred constructor for Spring
     @Autowired
-
-    SupplierRepository supplierRepository;
- 
-    // Added for unit tests that instantiate the service with a repository
-
-    public SupplierServiceImplJpa(SupplierRepository supplierRepository) {
-
+    public SupplierServiceImplJpa(SupplierRepository supplierRepository,
+                                  WarehouseRepository warehouseRepository,
+                                  ProductRepository productRepository) {
         this.supplierRepository = supplierRepository;
-
+        this.warehouseRepository = warehouseRepository;
+        this.productRepository = productRepository;
     }
- 
-    @Override
 
+    // Overload for tests that directly new() with only SupplierRepository
+    public SupplierServiceImplJpa(SupplierRepository supplierRepository) {
+        this.supplierRepository = supplierRepository;
+        this.warehouseRepository = null;
+        this.productRepository = null;
+    }
+
+    @Override
     public List<Supplier> getAllSuppliers() throws SQLException {
-
-        try {
-
-            return supplierRepository.findAll();
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to fetch suppliers", ex);
-
-        }
-
+        return new ArrayList<>(supplierRepository.findAll());
     }
- 
-    @Override
 
+    @Override
     public int addSupplier(Supplier supplier) throws SQLException {
-
-        try {
-
-            Supplier saved = supplierRepository.save(supplier);
-
-            return saved.getSupplierId();
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to add supplier", ex);
-
-        }
-
+        return supplierRepository.save(supplier).getSupplierId();
     }
- 
-    @Override
 
+    @Override
     public List<Supplier> getAllSuppliersSortedByName() throws SQLException {
-
-        try {
-
-            List<Supplier> list = new ArrayList<>(supplierRepository.findAll());
-
-            list.sort(Comparator.comparing(
-
-                s -> s.getSupplierName() == null ? "" : s.getSupplierName(),
-
-                String.CASE_INSENSITIVE_ORDER
-
-            ));
-
-            return list;
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to get suppliers sorted by name", ex);
-
-        }
-
+        List<Supplier> list = new ArrayList<>(supplierRepository.findAll());
+        Collections.sort(list);
+        return list;
     }
- 
-    @Override
 
+    @Override
     public void updateSupplier(Supplier supplier) throws SQLException {
-
-        try {
-
-            supplierRepository.save(supplier);
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to update supplier id: " + supplier.getSupplierId(), ex);
-
-        }
-
+        supplierRepository.save(supplier);
     }
- 
-    @Override
 
+    @Override
+    @Transactional
     public void deleteSupplier(int supplierId) throws SQLException {
-
-        try {
-
-            supplierRepository.deleteById(supplierId);
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to delete supplier id: " + supplierId, ex);
-
+        // Day-8 cascade deletion
+        if (productRepository != null) {
+            productRepository.deleteBySupplierId(supplierId);
         }
-
+        if (warehouseRepository != null) {
+            warehouseRepository.deleteBySupplierId(supplierId);
+        }
+        supplierRepository.deleteBySupplierId(supplierId);
     }
- 
+
     @Override
-
     public Supplier getSupplierById(int supplierId) throws SQLException {
-
-        try {
-
-            return supplierRepository.findById(supplierId).orElse(null);
-
-        } catch (DataAccessException ex) {
-
-            throw new SQLException("Failed to fetch supplier id: " + supplierId, ex);
-
-        }
-
+        return supplierRepository.findBySupplierId(supplierId);
     }
-
 }
  
