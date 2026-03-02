@@ -1,6 +1,8 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Supplier;
+import com.edutech.progressive.exception.SupplierAlreadyExistsException;
+import com.edutech.progressive.exception.SupplierDoesNotExistException;
 import com.edutech.progressive.service.SupplierService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +39,9 @@ public class SupplierController {
     public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) {
         try {
             Supplier s = supplierServiceJpa.getSupplierById(supplierId);
-            if (s != null) {
-                return ResponseEntity.ok(s);
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-
+            return ResponseEntity.ok(s);
+        } catch (SupplierDoesNotExistException dne) {
+            return ResponseEntity.badRequest().build(); // Day 9: BAD_REQUEST if supplier does not exist
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -51,6 +51,8 @@ public class SupplierController {
     public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) {
         try {
             return ResponseEntity.status(201).body(supplierServiceJpa.addSupplier(supplier));
+        } catch (SupplierAlreadyExistsException dup) {
+            return ResponseEntity.badRequest().build(); // Day 9: BAD_REQUEST on duplicate user/email
         } catch (SQLException e) {
             return ResponseEntity.status(500).build();
         }
@@ -62,6 +64,8 @@ public class SupplierController {
             supplier.setSupplierId(supplierId);
             supplierServiceJpa.updateSupplier(supplier);
             return ResponseEntity.ok().build();
+        } catch (SupplierAlreadyExistsException dup) {
+            return ResponseEntity.badRequest().build();
         } catch (SQLException e) {
             return ResponseEntity.status(500).build();
         }
@@ -82,9 +86,8 @@ public class SupplierController {
         try {
             return ResponseEntity.ok(supplierArray.getAllSuppliers());
         } catch (SQLException e) {
-            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
-        return null;
     }
 
     @GetMapping("/fromArrayList/all")
@@ -92,19 +95,17 @@ public class SupplierController {
         try {
             return ResponseEntity.ok(supplierArray.getAllSuppliersSortedByName());
         } catch (SQLException e) {
-            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
-        return null;
     }
 
     @PostMapping("/toArrayList")
     public ResponseEntity<Integer> addSupplierToArrayList(@RequestBody Supplier supplier) {
-        int size = -1;
         try {
-            size = supplierArray.addSupplier(supplier);
+            int size = supplierArray.addSupplier(supplier);
+            return ResponseEntity.status(HttpStatus.CREATED).body(size);
         } catch (SQLException e) {
-            e.printStackTrace();
+            return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(size);
     }
 }

@@ -37,6 +37,7 @@ public class Product {
         this.quantity = quantity;
         this.price = price;
     }
+    
 
     public int getProductId() {
         return productId;

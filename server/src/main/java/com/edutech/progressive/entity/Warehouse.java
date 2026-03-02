@@ -1,80 +1,69 @@
 package com.edutech.progressive.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "warehouse")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Warehouse implements Comparable<Warehouse> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "warehouse_id")
     private int warehouseId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "supplier_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Supplier supplier; // Many warehouses belong to one supplier
+    @Column(name = "supplier_id", insertable = false, updatable = false)
+    private int supplierId;
 
-    @Column(name = "warehouse_name", nullable = false, length = 100)
     private String warehouseName;
-
-    @Column(name = "location", nullable = false, length = 255)
     private String location;
-
-    @Column(name = "capacity", nullable = false)
     private int capacity;
 
-    public Warehouse() { }
 
-    public Warehouse(int warehouseId, Supplier supplier, String warehouseName, String location, int capacity) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    @JsonIgnore
+    private Supplier supplier;
+
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Product> products;
+
+    public Warehouse() {}
+
+    public Warehouse(int warehouseId, int supplierId, String warehouseName, String location, int capacity) {
         this.warehouseId = warehouseId;
-        this.supplier = supplier;
+        this.supplierId = supplierId;
         this.warehouseName = warehouseName;
         this.location = location;
         this.capacity = capacity;
     }
 
-    public int getWarehouseId() {
-        return warehouseId;
-    }
-    public void setWarehouseId(int warehouseId) {
-        this.warehouseId = warehouseId;
-    }
+    public int getWarehouseId() { return warehouseId; }
+    public void setWarehouseId(int warehouseId) { this.warehouseId = warehouseId; }
 
-    public Supplier getSupplier() {
-        return supplier;
-    }
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
-    }
+    public int getSupplierId() { return supplierId; }
+    public void setSupplierId(int supplierId) { this.supplierId = supplierId; }
 
-    public String getWarehouseName() {
-        return warehouseName;
-    }
-    public void setWarehouseName(String warehouseName) {
-        this.warehouseName = warehouseName;
-    }
+    public String getWarehouseName() { return warehouseName; }
+    public void setWarehouseName(String warehouseName) { this.warehouseName = warehouseName; }
 
-    public String getLocation() {
-        return location;
-    }
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public int getCapacity() {
-        return capacity;
-    }
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
 
-    /** Sort by capacity in DESC order */
+    public Supplier getSupplier() { return supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
+    public List<Product> getProducts() { return products; }
+    public void setProducts(List<Product> products) { this.products = products; }
+
     @Override
-    public int compareTo(Warehouse other) {
-        return Integer.compare(other.capacity, this.capacity);
+    public int compareTo(Warehouse o) {
+        return Integer.compare(this.capacity, o.capacity);
     }
 }

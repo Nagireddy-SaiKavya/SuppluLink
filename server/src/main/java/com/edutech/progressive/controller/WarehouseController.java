@@ -2,7 +2,7 @@ package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Warehouse;
 import com.edutech.progressive.service.WarehouseService;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,37 +14,29 @@ import java.util.List;
 @RequestMapping("/warehouse")
 public class WarehouseController {
 
-    private final WarehouseService warehouseService;
+    @Autowired
+    private WarehouseService warehouseService;
 
-    public WarehouseController(@Qualifier("warehouseServiceImplJpa") WarehouseService warehouseService) {
-        this.warehouseService = warehouseService;
-    }
-
-    // GET /warehouse
     @GetMapping
     public ResponseEntity<List<Warehouse>> getAllWarehouses() {
         try {
-            return ResponseEntity.ok(warehouseService.getAllWarehouses());
+            List<Warehouse> list = warehouseService.getAllWarehouses();
+            return ResponseEntity.ok(list);
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // GET /warehouse/{warehouseId}
     @GetMapping("/{warehouseId}")
     public ResponseEntity<Warehouse> getWarehouseById(@PathVariable int warehouseId) {
         try {
             Warehouse w = warehouseService.getWarehouseById(warehouseId);
-            if (w == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            return ResponseEntity.ok(w);
+            return (w != null) ? ResponseEntity.ok(w) : ResponseEntity.notFound().build();
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // POST /warehouse
     @PostMapping
     public ResponseEntity<Integer> addWarehouse(@RequestBody Warehouse warehouse) {
         try {
@@ -55,7 +47,6 @@ public class WarehouseController {
         }
     }
 
-    // PUT /warehouse/{warehouseId}
     @PutMapping("/{warehouseId}")
     public ResponseEntity<Void> updateWarehouse(@PathVariable int warehouseId, @RequestBody Warehouse warehouse) {
         try {
@@ -67,7 +58,6 @@ public class WarehouseController {
         }
     }
 
-    // DELETE /warehouse/{warehouseId}
     @DeleteMapping("/{warehouseId}")
     public ResponseEntity<Void> deleteWarehouse(@PathVariable int warehouseId) {
         try {
@@ -78,13 +68,18 @@ public class WarehouseController {
         }
     }
 
-    // GET /warehouse/supplier/{supplierId}
-    @GetMapping("/supplier/{supplierId}")
-    public ResponseEntity<List<Warehouse>> getWarehousesBySupplier(@PathVariable int supplierId) {
-        try {
-            return ResponseEntity.ok(warehouseService.getWarehouseBySupplier(supplierId));
-        } catch (SQLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
+@GetMapping("/supplier/{supplierId}")
+public ResponseEntity<?> getWarehousesBySupplier(@PathVariable int supplierId) {
+    try {
+        List<Warehouse> list = warehouseService.getWarehouseBySupplier(supplierId);
+        return ResponseEntity.ok(list);
+    } catch (com.edutech.progressive.exception.NoWarehouseFoundForSupplierException noWh) {
+        // Day 9: BAD_REQUEST if no warehouses for the supplier
+        return ResponseEntity.badRequest().build();
+    } catch (SQLException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+}
+
 }

@@ -1,6 +1,6 @@
 package com.edutech.progressive.repository;
 
-import com.edutech.progressive.entity.Supplier;  // ✅ use the entity, not java.util.function.Supplier
+import com.edutech.progressive.entity.Supplier;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
@@ -13,4 +13,8 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     void deleteBySupplierId(@Param("supplierId") int supplierId);
 
     Supplier findBySupplierId(@Param("supplierId") int supplierId);
+
+    Supplier findByUsername(@Param("username") String username);
+
+    Supplier findByEmail(@Param("email") String email);
 }

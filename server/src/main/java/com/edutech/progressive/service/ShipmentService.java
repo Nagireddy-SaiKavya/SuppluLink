@@ -2,17 +2,18 @@ package com.edutech.progressive.service;
 
 import com.edutech.progressive.entity.Shipment;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ShipmentService {
-    List<Shipment> getAllShipments();
 
-    Shipment getShipmentById(int shipmentId);
+    List<Shipment> getAllShipments() throws SQLException;
 
-    int addShipment(Shipment shipment);
+    Shipment getShipmentById(int shipmentId) throws SQLException;
 
-    void updateShipment(Shipment shipment);
+    int addShipment(Shipment shipment) throws SQLException;
 
-    void deleteShipment(int shipmentId);
+    void updateShipment(Shipment shipment) throws SQLException;
 
+    void deleteShipment(int shipmentId) throws SQLException;
 }

@@ -1,6 +1,7 @@
 package com.edutech.progressive.controller;
 
 import com.edutech.progressive.entity.Product;
+import com.edutech.progressive.exception.InsufficientCapacityException;
 import com.edutech.progressive.service.ProductService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -16,12 +17,10 @@ public class ProductController {
 
     private final ProductService productService;
 
-    // Ensure there is a bean named "productServiceImplJpa"
     public ProductController(@Qualifier("productServiceImplJpa") ProductService productService) {
         this.productService = productService;
     }
 
-    // GET /product
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
@@ -31,7 +30,6 @@ public class ProductController {
         }
     }
 
-    // GET /product/{productId}
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable int productId) {
         try {
@@ -45,18 +43,18 @@ public class ProductController {
         }
     }
 
-    // POST /product
     @PostMapping
     public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
         try {
             int id = productService.addProduct(product);
             return ResponseEntity.status(HttpStatus.CREATED).body(id);
+        } catch (InsufficientCapacityException ice) {
+            return ResponseEntity.badRequest().build();
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    // PUT /product/{productId}
     @PutMapping("/{productId}")
     public ResponseEntity<Void> updateProduct(@PathVariable int productId, @RequestBody Product product) {
         try {
@@ -68,7 +66,6 @@ public class ProductController {
         }
     }
 
-    // DELETE /product/{productId}
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable int productId) {
         try {
@@ -79,7 +76,6 @@ public class ProductController {
         }
     }
 
-    // GET /product/warehouse/{warehouseId}
     @GetMapping("/warehouse/{warehouseId}")
     public ResponseEntity<List<Product>> getAllProductByWarehouse(@PathVariable int warehouseId) {
         try {
