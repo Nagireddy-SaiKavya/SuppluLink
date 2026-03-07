@@ -1,33 +1,47 @@
 package com.edutech.progressive.entity;
- 
+
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
- @Entity
-public class Supplier implements Comparable<Supplier>{
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "supplier")
+public class Supplier implements Comparable<Supplier> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "supplier_id")
     private int supplierId;
+    @Column(name = "supplier_name", nullable = false)
     private String supplierName;
+    @Column(name = "email", nullable = false)
     private String email;
+    @Column(name = "phone")
     private String phone;
-    private String address;
+    @Column(name = "username", nullable = false)
     private String username;
+    @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "role")
     private String role;
-    public Supplier() {
-    }
-    public Supplier(int supplierId, String supplierName, String email, String phone, String address, String username,
-            String password, String role) {
+    @Column(name = "address")
+    private String address;
+
+    public Supplier(int supplierId, String supplierName, String email, String phone, String username, String password,
+            String role, String address) {
         this.supplierId = supplierId;
         this.supplierName = supplierName;
         this.email = email;
         this.phone = phone;
-        this.address = address;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.address = address;
+    }
+    public Supplier() {
     }
     public int getSupplierId() {
         return supplierId;
@@ -53,12 +67,6 @@ public class Supplier implements Comparable<Supplier>{
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getAddress() {
-        return address;
-    }
-    public void setAddress(String address) {
-        this.address = address;
-    }
     public String getUsername() {
         return username;
     }
@@ -77,9 +85,18 @@ public class Supplier implements Comparable<Supplier>{
     public void setRole(String role) {
         this.role = role;
     }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
     @Override
     public int compareTo(Supplier o) {
-        return this.supplierName.compareTo(o.supplierName);
+        // TODO Auto-generated method stub
+        // throw new UnsupportedOperationException("Unimplemented method 'compareTo'");
+        return this.getSupplierName().compareTo(o.getSupplierName());
     }
 
+    
 }
