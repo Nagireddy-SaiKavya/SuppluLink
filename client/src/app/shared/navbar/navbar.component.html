@@ -1,32 +1,33 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/supplylink/dashboard">SupplyLink</a>
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
-  private readonly base = typeof window !== 'undefined' && window.location
-    ? window.location.origin // e.g., http://localhost:9876
-    : '';                    // fallback (tests run in browser, so this will be set)
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  constructor(private http: HttpClient) {}
+    <div id="navbarNav" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/supplylink/dashboard">Dashboard</a></li>
 
-  login(payload: { username: string; password: string }): Observable<any> {
-    const url = `${this.base}/context.html/user/login`;
-    return this.http.post(url, payload);
-  }
+        <!-- Visible only if role !== USER -->
+        <li class="nav-item" *ngIf="role !== 'USER'">
+          <a class="nav-link" routerLink="/supplylink/supplier">Add Supplier</a>
+        </li>
+        <li class="nav-item" *ngIf="role !== 'USER'">
+          <a class="nav-link" routerLink="/supplylink/warehouse">Add Warehouse</a>
+        </li>
+        <li class="nav-item" *ngIf="role !== 'USER'">
+          <a class="nav-link" routerLink="/supplylink/product">Add Product</a>
+        </li>
+      </ul>
 
-  createUser(user: any): Observable<any> {
-    const url = `${this.base}/context.html/user/register`;
-    return this.http.post(url, user);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  setToken(token: string): void {
-    localStorage.setItem('token', token);
-  }
-}
+      <div class="d-flex">
+        <span class="navbar-text me-3">Role: {{ role || 'GUEST' }}</span>
+        <button class="btn btn-outline-light btn-sm" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</nav>
