@@ -18,7 +18,6 @@
 /home/coder/app/server/src/main/java/com/edutech/progressive/entity/Warehouse.java
 /home/coder/app/server/src/main/java/com/edutech/progressive/repository/WarehouseRepository.java
 /home/coder/app/server/src/main/java/com/edutech/progressive/service/impl/SupplierServiceImplArraylist.java
-/home/coder/app/server/src/main/java/com/edutech/progressive/service/impl/WarehouseDAOImpl.java
 /home/coder/app/server/src/main/java/com/edutech/progressive/controller/WarehouseController.java
 /home/coder/app/server/src/main/java/com/edutech/progressive/exception/SupplierAlreadyExistsException.java
 /home/coder/app/server/src/main/java/com/edutech/progressive/exception/NoWarehouseFoundForSupplierException.java
