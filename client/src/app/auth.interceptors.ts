@@ -1,34 +1,37 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 import {
-  HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+} from "@angular/common/http";
+import { Observable } from "rxjs";
+import { AuthService } from "./auth/services/auth.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService) { }
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
 
-  private getToken(): string | null {
-    return localStorage.getItem('token'); // or from a proper AuthService
-  }
+    const token = this.authService.getToken();
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Allow unauthenticated endpoints to pass through without token
-    const url = req.url?.toLowerCase();
-    if (url.includes('login') || url.includes('add-user')) {
-      return next.handle(req);
+    if (request.url.includes("login") || request.url.includes("add-user")) {
+      return next.handle(request);
     }
-
-    const token = this.getToken();
-
-    let headers = req.headers
-      .set('Accept', 'application/json')
-      .set('Content-Type', 'application/json');
 
     if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
+      request = request.clone({
+        setHeaders: {
+          "Content-Type": "application/json; charset=utf-8",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
     }
 
-    const authReq = req.clone({ headers });
-    return next.handle(authReq);
+    return next.handle(request);
   }
 }

@@ -10,13 +10,4 @@ import { Warehouse } from '../../types/Warehouse';
 })
 export class WarehouseSampleComponent {
 
-  warehouse: Warehouse = new Warehouse(
-    1,
-    "12",
-    "Flamingo",
-    "Nevada",
-    1000
-  );
-
 }
-
