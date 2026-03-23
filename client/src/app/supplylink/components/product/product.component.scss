@@ -1,2 +1,252 @@
-.container { max-width: 720px; }
-.card { border-radius: 8px; }
+/* =========================================================
+   Create Product – Elegant Pastel Form
+   Targets: .user-form, .form-group, .form-control, select,
+            .btn-submit, .task-list, .success, .error
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+$bg: #f5f7fb;
+$card: #ffffff;
+$ink: #1f2937;         // text
+$muted: #6b7280;       // secondary text
+
+$accent: #6a8cff;      // indigo pastel
+$accent-600: #5a78e6;  // hover
+$accent-soft: #eef1ff;
+
+$success: #1e7f4f;
+$success-bg: #eaf8f0;
+$error: #c0362c;
+$error-bg: #fdeeee;
+
+$border: #e6e9f0;
+$border-2: #d7dcec;
+
+$focus-ring: rgba(106, 140, 255, 0.35);
+
+$radius-sm: 8px;
+$radius-md: 14px;
+$radius-lg: 20px;
+
+$shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+$shadow-md: 0 12px 30px rgba(15, 23, 42, 0.10);
+
+$space-1: 0.25rem;
+$space-2: 0.5rem;
+$space-3: 0.75rem;
+$space-4: 1rem;
+$space-5: 1.25rem;
+$space-6: 1.5rem;
+$space-8: 2rem;
+
+$bp-md: 768px;
+
+/* ---------- Mixins ---------- */
+@mixin focus-ring($color: $focus-ring) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px $color;
+}
+
+@mixin input-base {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
+  background: #fbfcfe;
+  color: $ink;
+  font-size: 0.95rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+
+  &::placeholder {
+    color: rgba($muted, 0.8);
+  }
+  &:hover {
+    background: #ffffff;
+    border-color: $border-2;
+  }
+  &:focus {
+    border-color: $accent;
+    @include focus-ring();
+  }
+
+  /* Angular reactive forms states */
+  &.ng-touched.ng-invalid {
+    border-color: $error;
+    box-shadow: 0 0 0 4px rgba($error, 0.15);
+  }
+  &.ng-touched.ng-valid {
+    border-color: #2ecc71;
+  }
+}
+
+@mixin button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, $accent, lighten($accent, 8%));
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow-sm;
+    background: linear-gradient(135deg, $accent-600, lighten($accent-600, 8%));
+  }
+  &:active { transform: translateY(0); box-shadow: none; }
+  &:focus-visible { @include focus-ring(); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+/* ---------- Optional page base if needed ----------
+:host {
+  display: block;
+  background: $bg;
+}
+---------------------------------------------------- */
+
+/* ---------- Form wrapper (card-like) ---------- */
+.user-form {
+  background: $card;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  padding: $space-8;
+  box-shadow: $shadow-md;
+
+  display: grid;
+  gap: $space-6;
+
+  /* subtle header accent for first label set */
+  .form-group:first-of-type label::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: $space-2;
+    border-radius: 999px;
+    background: linear-gradient(135deg, $accent, #f472b6);
+    vertical-align: middle;
+  }
+}
+
+/* ---------- Form groups ---------- */
+.form-group {
+  display: grid;
+  gap: $space-2;
+
+  label {
+    font-weight: 600;
+    color: $muted;
+    margin-bottom: $space-1;
+  }
+
+  /* Inputs */
+  .form-control {
+    @include input-base;
+  }
+
+  /* Select (no class on select in your markup) */
+  select {
+    @include input-base;
+
+    /* custom arrow */
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, $muted 50%),
+      linear-gradient(135deg, $muted 50%, transparent 50%),
+      linear-gradient(to right, $border, $border);
+    background-position:
+      calc(100% - 22px) 50%,
+      calc(100% - 14px) 50%,
+      calc(100% - 2.5rem) 50%;
+    background-size: 6px 6px, 6px 6px, 1px 1.6em;
+    background-repeat: no-repeat;
+    padding-right: 2.75rem;
+  }
+}
+
+/* ---------- Actions ---------- */
+.btn-submit {
+  @include button-primary;
+  width: 100%;
+
+  @media (min-width: $bp-md) {
+    width: fit-content;
+    min-width: 200px;
+  }
+}
+
+/* ---------- Helper link ---------- */
+.task-list {
+  display: inline-block;
+  color: $accent;
+  font-weight: 700;
+  text-decoration: none;
+  width: fit-content;
+
+  &:hover {
+    color: $accent-600;
+    text-decoration: underline;
+  }
+  &:focus-visible { @include focus-ring(); }
+}
+
+/* ---------- Async messages ---------- */
+.success,
+.error {
+  padding: $space-3 $space-4;
+  border-radius: $radius-md;
+  border: 1px solid transparent;
+  line-height: 1.35;
+  animation: slide-in 200ms ease both;
+  font-weight: 600;
+}
+
+.success {
+  background: $success-bg;
+  color: $success;
+  border-color: rgba($success, 0.25);
+}
+
+.error {
+  background: $error-bg;
+  color: $error;
+  border-color: rgba($error, 0.25);
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Responsive layout: two columns on md+ ---------- */
+@media (min-width: $bp-md) {
+  .user-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: $space-8;
+
+    /* Full-width rows */
+    .btn-submit,
+    .success,
+    .error,
+    .task-list {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

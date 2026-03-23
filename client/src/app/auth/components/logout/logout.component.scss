@@ -1,1 +1,131 @@
-button { min-width: 120px; }
+/* =========================================================
+   Logout – Elegant Pastel Button
+   Targets: .logout-container, .logout-button
+   ========================================================= */
+
+/* ---------- Theme tokens ---------- */
+$bg: #f5f7fb;
+$ink: #1f2937;
+
+$accent: #6a8cff;       // indigo pastel
+$accent-600: #5a78e6;   // hover
+$danger: #c0362c;       // optional danger scheme
+$danger-600: #a62e25;
+
+$border: #e6e9f0;
+$focus-ring: rgba(106, 140, 255, 0.35);
+
+$radius-pill: 999px;
+$radius-md: 12px;
+
+$shadow-sm: 0 6px 18px rgba(15, 23, 42, 0.08);
+$shadow-hover: 0 10px 24px rgba(15, 23, 42, 0.12);
+
+$space-2: 0.5rem;
+$space-3: 0.75rem;
+$space-4: 1rem;
+
+/* ---------- Mixins ---------- */
+@mixin focus-ring($color: $focus-ring) {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px $color;
+}
+
+/* ---------- Container ---------- */
+.logout-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: $space-4;
+
+  /* If this sits inside a navbar/card without padding, feel free to remove above padding */
+}
+
+/* ---------- Button ---------- */
+.logout-button {
+  --bg: linear-gradient(135deg, $accent, lighten($accent, 8%));
+  --bg-hover: linear-gradient(135deg, $accent-600, lighten($accent-600, 8%));
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: $space-3 $space-4;
+  border: 1px solid transparent;
+  border-radius: $radius-pill;
+
+  background: var(--bg);
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+
+  box-shadow: $shadow-sm;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease;
+
+  /* icon slot (if you add an icon later) */
+  svg,
+  i {
+    font-size: 1rem;
+    opacity: 0.95;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $shadow-hover;
+    background: var(--bg-hover);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: $shadow-sm;
+    filter: brightness(0.98);
+  }
+
+  &:focus-visible {
+    @include focus-ring();
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* ---------- Subtle variant: outline (if needed) ----------
+.logout-button--outline {
+  background: #ffffff;
+  color: $ink;
+  border: 1px solid $border;
+  box-shadow: none;
+
+  &:hover { box-shadow: $shadow-sm; }
+}
+----------------------------------------------------------- */
+
+/* ---------- Danger variant (if you want red logout) ---------- */
+.logout-button--danger {
+  --bg: linear-gradient(135deg, $danger, lighten($danger, 6%));
+  --bg-hover: linear-gradient(135deg, $danger-600, lighten($danger-600, 6%));
+}
+
+/* ---------- Compact layout helper (optional) ---------- */
+.logout-container--compact {
+  padding: $space-2 $space-4;
+}
+
+/* ---------- Reduced motion accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,1 +1,224 @@
-i.navbar { margin-bottom: 1rem; }
+
+/* =========================================================
+   SupplyLink – Pastel, Feminine Navbar (Elegant & Playful)
+   Targets: .navbar, .navbar-list, .nav-link, .app-name
+   ========================================================= */
+
+/* ---------- Palette ---------- */
+$rose: #fbcfe8;        // light rose
+$rose-2: #f472b6;      // bright rose accent
+$lavender: #e9d5ff;    // lavender
+$lilac: #c4b5fd;       // lilac accent
+$mint: #bbf7d0;        // mint
+$sky: #bae6fd;         // sky
+$pearl: #ffffff;       // white
+$ink: #4a4a4a;         // soft charcoal
+$ink-muted: #6b7280;   // muted text
+
+$shadow: 0 10px 30px rgba(148, 120, 172, 0.18);
+$shadow-hover: 0 14px 34px rgba(148, 120, 172, 0.24);
+
+$radius-xl: 18px;
+$radius-pill: 999px;
+
+$gap-2: 0.5rem;
+$gap-3: 0.75rem;
+$gap-4: 1rem;
+$gap-5: 1.25rem;
+
+$transition: 220ms cubic-bezier(0.35, 0.7, 0, 1);
+
+/* ---------- Navbar container ---------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  /* dreamy pastel gradient bar */
+  background:
+    linear-gradient(135deg, rgba($rose, 0.6), rgba($lavender, 0.6)) border-box,
+    linear-gradient(135deg, rgba($mint, 0.25), rgba($sky, 0.25)) padding-box;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: $shadow;
+
+  padding: 10px 16px;
+  border-radius: 16px;
+  margin: 14px auto;
+  width: min(1100px, calc(100% - 20px));
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $gap-4;
+
+  transition: box-shadow $transition, transform $transition;
+
+  /* subtle float on hover (desktop) */
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-1px);
+  }
+}
+
+/* ---------- Left side: nav items ---------- */
+.navbar-list {
+  display: flex;
+  align-items: center;
+  gap: $gap-3;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Brand / App name ---------- */
+.app-name {
+  /* pill badge with shimmer */
+  position: relative;
+  padding: 10px 16px;
+  border-radius: $radius-pill;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  color: $ink;
+  background: linear-gradient(135deg, $pearl, rgba(255, 255, 255, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 8px 20px rgba(175, 140, 210, 0.12);
+  transition: transform $transition, box-shadow $transition;
+
+  /* pastel underline accent */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 6px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, $rose-2, $lilac);
+    opacity: 0.0;
+    transform: scaleX(0.4);
+    transform-origin: center;
+    transition: opacity $transition, transform $transition;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 16px 28px rgba(175, 140, 210, 0.2);
+
+    &::after {
+      opacity: 0.7;
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* ---------- Links ---------- */
+.nav-link {
+  --bg: rgba(255, 255, 255, 0.7);
+  --bg-hover: rgba(255, 255, 255, 0.95);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: $radius-pill;
+  text-decoration: none;
+  color: $ink-muted;
+  font-weight: 600;
+
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition:
+    color $transition,
+    background-color $transition,
+    transform $transition,
+    box-shadow $transition;
+
+  /* subtle gradient edge highlight */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* shimmer on hover */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.65) 30%,
+      transparent 60%
+    );
+    transform: translateX(-120%);
+    transition: transform 600ms ease;
+    z-index: -1;
+  }
+
+  &:hover {
+    color: $ink;
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(170, 140, 210, 0.18);
+
+    &::before {
+      transform: translateX(0%);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Logout component alignment ---------- */
+/* Assuming <app-logout> renders a button or link */
+app-logout {
+  display: inline-flex;
+  align-items: center;
+
+  /* keep its inner button/link harmonious if it has .nav-link */
+  .nav-link,
+  button,
+  a {
+    @extend .nav-link;
+  }
+}
+
+/* ---------- Compact on small screens ---------- */
+@media (max-width: 720px) {
+  .navbar {
+    padding: 10px 12px;
+    border-radius: 14px;
+    gap: $gap-3;
+  }
+
+  .navbar-list {
+    gap: $gap-2;
+    flex-wrap: wrap;
+  }
+
+  .app-name {
+    padding: 9px 14px;
+    font-size: 0.98rem;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.92rem;
+  }
+}
+
+/* ---------- Reduced motion accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

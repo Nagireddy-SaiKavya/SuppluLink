@@ -1,3 +1,182 @@
+/* ======================================================
+   Update Supplier – Alignment-First, Clean Layout
+   ====================================================== */
 
-.container { max-width: 640px; }
-.card { border-radius: 8px; }
+$bg: #f5f7fb;
+$card: #ffffff;
+$text: #1f2937;
+$muted: #6b7280;
+
+$primary: #6a8cff;
+$primary-hover: #5a78e6;
+
+$success: #1e7f4f;
+$success-bg: #eaf8f0;
+$error: #c0362c;
+$error-bg: #fdeeee;
+
+$border: #e5e7eb;
+
+$radius: 14px;
+$shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+
+$gap-xxs: .375rem;
+$gap-xs:  .5rem;
+$gap-sm:  .75rem;
+$gap-md:  1rem;
+$gap-lg:  1.25rem;
+$gap-xl:  1.5rem;
+$gap-2xl: 2rem;
+
+$bp-md: 900px; /* breakpoint where we form 2 columns */
+
+/* ---------- Page container (optional wrapper if you use one) ---------- */
+.team-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: $gap-2xl $gap-xl;
+  background: $bg;
+}
+
+/* ---------- Form Card ---------- */
+.user-form {
+  width: 100%;
+  max-width: 760px;
+
+  background: $card;
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: $shadow;
+
+  /* Base: single column, predictable vertical spacing */
+  display: grid;
+  gap: $gap-xl;
+  padding: $gap-2xl;
+
+  /* Title */
+  h2 {
+    margin: 0;
+    text-align: left;
+    font-size: clamp(1.3rem, 1.05rem + 1vw, 1.8rem);
+    font-weight: 800;
+    color: $text;
+  }
+}
+
+/* ---------- Field group: label, input, error aligned vertically ---------- */
+.form-group {
+  display: grid;
+  gap: $gap-xs;
+
+  label {
+    font-size: .92rem;
+    font-weight: 600;
+    color: $muted;
+  }
+
+  /* Inputs & Selects — unified sizing */
+  .form-control,
+  select.form-control {
+    width: 100%;
+    min-height: 44px;               /* keeps rows equal height */
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid $border;
+    background: #fff;
+    color: $text;
+    font-size: .95rem;
+    line-height: 1.2;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(106, 140, 255, 0.18);
+    }
+  }
+
+  /* Angular validity */
+  .form-control.ng-touched.ng-invalid,
+  select.form-control.ng-touched.ng-invalid {
+    border-color: $error;
+    box-shadow: 0 0 0 3px rgba(192, 54, 44, 0.15);
+  }
+
+  /* Field-level error text */
+  .error {
+    margin-top: $gap-xxs;
+
+    small {
+      display: block;
+      font-size: .82rem;
+      color: $error;
+      line-height: 1.25;
+    }
+  }
+}
+
+/* ---------- Primary action ---------- */
+.btn-submit {
+  justify-self: start; /* left-align in both single & two-column */
+  height: 46px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, $primary, lighten($primary, 10%));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease, background 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, $primary-hover, lighten($primary-hover, 10%));
+  }
+  &:active { transform: translateY(0); }
+}
+
+/* ---------- Success / Error banners (global) ---------- */
+.success,
+.error {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.success { background: $success-bg; color: $success; }
+.error   { background: $error-bg;   color: $error;   }
+
+/* ---------- Helper link ---------- */
+.task-list {
+  color: $primary;
+  font-weight: 600;
+  text-decoration: none;
+  width: fit-content;
+
+  &:hover { text-decoration: underline; }
+}
+
+/* ---------- 2-Column Layout at ≥ $bp-md ---------- */
+@media (min-width: $bp-md) {
+  .user-form {
+    /* two equal columns for fields, consistent gutters */
+    grid-template-columns: 1fr 1fr;
+    column-gap: $gap-2xl;
+    row-gap: $gap-xl;
+
+    /* The title and bottom rows should span across both columns */
+    h2,
+    .btn-submit,
+    .task-list,
+    .success,
+    .error {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Optional: align the form groups into a grid rhythm */
+  .form-group {
+    /* keep the same vertical rhythm inside groups */
+  }
+}

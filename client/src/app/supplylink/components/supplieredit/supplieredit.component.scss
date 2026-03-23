@@ -1,0 +1,170 @@
+/* ======================================================
+   Update Supplier – CLEAN & ALIGNED FORM (FIXED)
+   ====================================================== */
+
+$bg: #f5f7fb;
+$card: #ffffff;
+$text: #1f2937;
+$muted: #6b7280;
+
+$primary: #6a8cff;
+$primary-hover: #5a78e6;
+
+$success: #1e7f4f;
+$success-bg: #eaf8f0;
+$error: #c0362c;
+$error-bg: #fdeeee;
+
+$border: #e5e7eb;
+
+$radius: 14px;
+$shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+
+$gap-sm: 0.5rem;
+$gap-md: 1rem;
+$gap-lg: 1.5rem;
+$gap-xl: 2rem;
+
+/* ---------- Page container ---------- */
+.team-form-container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: $bg;
+  padding: $gap-xl;
+}
+
+/* ---------- Form card ---------- */
+.user-form {
+  width: 100%;
+  max-width: 760px;
+  background: $card;
+  border-radius: $radius;
+  padding: $gap-xl;
+  box-shadow: $shadow;
+
+  display: flex;
+  flex-direction: column;
+  gap: $gap-lg;
+}
+
+/* ---------- Heading ---------- */
+.user-form h2 {
+  margin: 0;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $text;
+}
+
+/* ---------- Form groups ---------- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ---------- Labels ---------- */
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $muted;
+}
+
+/* ---------- Inputs & select ---------- */
+.form-control,
+select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  font-size: 0.95rem;
+  background: #ffffff;
+  color: $text;
+}
+
+.form-control:focus,
+select:focus {
+  outline: none;
+  border-color: $primary;
+}
+
+/* ---------- Angular validation ---------- */
+.form-control.ng-touched.ng-invalid,
+select.ng-touched.ng-invalid {
+  border-color: $error;
+}
+
+/* ---------- Error messages under fields ---------- */
+.form-group .error small {
+  font-size: 0.8rem;
+  color: $error;
+  line-height: 1.2;
+}
+
+/* ---------- Submit button ---------- */
+.btn-submit {
+  margin-top: $gap-md;
+  height: 46px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, $primary, lighten($primary, 10%));
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(135deg, $primary-hover, lighten($primary-hover, 10%));
+}
+
+/* ---------- Success & error messages ---------- */
+.success,
+.error {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.success {
+  background: $success-bg;
+  color: $success;
+}
+
+.error {
+  background: $error-bg;
+  color: $error;
+}
+
+/* ---------- Dashboard link ---------- */
+.task-list {
+  margin-top: 6px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  color: $primary;
+}
+
+.task-list:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Two-column layout ONLY on large screens ---------- */
+@media (min-width: 900px) {
+  .user-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: $gap-xl;
+  }
+
+  .user-form h2,
+  .btn-submit,
+  .task-list,
+  .success,
+  .error {
+    grid-column: 1 / -1;
+  }
+}
